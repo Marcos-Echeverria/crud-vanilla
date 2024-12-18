@@ -1,0 +1,9 @@
+.filas-modal{
+        background-color: #0a4f70 !important;
+        color: white !important;
+}
+
+.table thead th.filas-modal {
+    background-color: #0a4f70 !important;
+    color: white !important;
+}
