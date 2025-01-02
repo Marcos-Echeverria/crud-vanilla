@@ -39,10 +39,42 @@ const mostrar = (articulos) => {
     contenedor.innerHTML = resultado;
 };
 
+const Borrar = (element, event, selector, handler) => {
+    element.addEventListener(event, e => {
+        if (e.target.closest(selector)) {
+            handler(e)
+        }
+    })
+};
+// Procedimiento Borrar
+Borrar(document, 'click', '.btnBorrar', e => {
+    const fila = e.target.parentNode.parentNode
+    const id = fila.firstElementChild.innerHTML
 
+    alertify.confirm("¿Seguro que desea eliminar el producto?",
+        function () {
+            fetch(url + id, {
+                method: 'DELETE'
+            })
+                .then(res => res.json())
+                .then(() => location.reload())
+        },
+        function () {
+            alertify.error('Cancel')
+        });
+})
+
+// Procedimineto Editar
+// let idForm = 0;
+
+// Editar(document, 'click', '.btnEditar', e = {
+//     const fila = e.target.parentNode.parentNode
+//     const id = fila.firstElementChild.innerHTML
+// })
 
 // Procedimiento mostrar 
 fetch(url)
     .then(response => response.json())
     .then(data => mostrar(data))
     .catch(error => console.log(error));
+
