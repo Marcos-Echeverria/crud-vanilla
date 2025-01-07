@@ -1,4 +1,3 @@
-// Variables
 const url = 'http://localhost:3000/api/articulos/';
 const contenedor = document.querySelector('tbody');
 let resultado = ''
@@ -19,7 +18,7 @@ btnCrear.addEventListener('click', () => {
 
 // Procedimiento para mostrar resultados
 const mostrar = (articulos) => {
-    let resultado = ''; // Asegúrate de inicializar la variable resultado
+    let resultado = '';
 
     articulos.forEach(articulo => {
         resultado += `
@@ -39,6 +38,13 @@ const mostrar = (articulos) => {
     contenedor.innerHTML = resultado;
 };
 
+const Editar = (element, event, selector, handler) => {
+    element.addEventListener(event, e => {
+        if (e.target.closest(selector)) {
+            handler(e)
+        }
+    })
+};
 const Borrar = (element, event, selector, handler) => {
     element.addEventListener(event, e => {
         if (e.target.closest(selector)) {
@@ -46,7 +52,8 @@ const Borrar = (element, event, selector, handler) => {
         }
     })
 };
-// Procedimiento Borrar
+
+
 Borrar(document, 'click', '.btnBorrar', e => {
     const fila = e.target.parentNode.parentNode
     const id = fila.firstElementChild.innerHTML
@@ -64,15 +71,63 @@ Borrar(document, 'click', '.btnBorrar', e => {
         });
 })
 
-// Procedimineto Editar
-// let idForm = 0;
+let idForm = 0;
 
-// Editar(document, 'click', '.btnEditar', e = {
-//     const fila = e.target.parentNode.parentNode
-//     const id = fila.firstElementChild.innerHTML
-// })
+Editar(document, 'click', '.btnEditar', e => {
+    const fila = e.target.parentNode.parentNode
+    idForm = fila.children[0].innerHTML
+    const descripcionForm = fila.children[1].innerHTML
+    const precioForm = fila.children[2].innerHTML
+    const stockForm = fila.children[3].innerHTML
 
-// Procedimiento mostrar 
+    descripcion.value = descripcionForm;
+    precio.value = precioForm;
+    stock.value = stockForm;
+    opcion = 'editar'
+    modalArticulos.show()
+})
+
+
+formArticulo.addEventListener('submit', (e) => {
+    e.preventDefault()
+    if (opcion == 'crear') {
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                descripcion: descripcion.value,
+                precio: precio.value,
+                stock: stock.value
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                const nuevoArticulo = []
+                nuevoArticulo.push(data)
+                mostrar(nuevoArticulo)
+            })
+
+    }
+    if (opcion == 'editar') {
+        fetch(url + idForm, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                descripcion: descripcion.value,
+                precio: precio.value,
+                stock: stock.value
+            })
+        })
+            .then(response => response.json())
+            .then(response => location.reload())
+    }
+    modalArticulos.hide()
+})
+
 fetch(url)
     .then(response => response.json())
     .then(data => mostrar(data))
